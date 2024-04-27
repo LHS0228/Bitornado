@@ -6,7 +6,7 @@ using UnityEngine;
 public class Rolling : MonoBehaviour
 {
     [SerializeField]
-    private float spinSpeed = 0;
+    public float spinSpeed = 0;
 
     // Update is called once per frame
     void FixedUpdate()

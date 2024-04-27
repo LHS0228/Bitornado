@@ -8,13 +8,19 @@ using UnityEngine.InputSystem;
 
 public class PlayerMove : MonoBehaviour
 {
+    public float test;
+
     Silhouette silhouette;
+    public Rolling whirlwindRolling;
 
     [SerializeField]
     [Header("중심점, 속도, 거리 설정")]
     private Transform centerPoint; // 중심점
     public float rotationSpeed = 10f; // 회전 속도
     public float distance = 10f; // 중심점과의 거리
+    public float rightRotationMultiplier = 1.5f; // 오른쪽 회전 속도 배수
+
+
 
     [Header("반대로 돌기 방향 설정")]
     public bool turnRotation;
@@ -29,12 +35,15 @@ public class PlayerMove : MonoBehaviour
     public float dashTime = 0.3f; // 대쉬 지속 시간
 
     [Header("왠만하면 건들지 말 것")]
+    [SerializeField]
     Vector2 inputVec;
     [SerializeField]
     private bool isJumping = false;
     [SerializeField]
     private bool isDashing = false;
     public float currentDistance; //점프 설정
+    [SerializeField]
+    private float lastRotationDirection = -1; // 마지막 회전 방향 저장
 
     private void Start()
     {
@@ -44,27 +53,33 @@ public class PlayerMove : MonoBehaviour
 
     void FixedUpdate()
     {
-        // 중심점을 기준으로 한 회전을 계산합니다.
-        float rotationAmount = inputVec.x * rotationSpeed;
-
-        if (rotationAmount != 0)
+        // 입력에 따라 회전 방향 결정
+        if (inputVec.x != 0)
         {
-            transform.RotateAround(centerPoint.position, Vector3.forward, -rotationAmount * Time.deltaTime);
-        }
-        else
-        {
-            transform.RotateAround(centerPoint.position, Vector3.forward, (turnRotation ? -1 : 1) * rotationSpeed * Time.deltaTime);
+            lastRotationDirection = Mathf.Sign(inputVec.x);
         }
 
+        // 회전 속도 계산
+        float speedModifier = (lastRotationDirection > 0) ? rightRotationMultiplier : 1;
+        float rotationAmount = lastRotationDirection * rotationSpeed * speedModifier * Time.deltaTime;
+
+        if (turnRotation)
+        {
+            rotationAmount = -rotationAmount; // turnRotation이 true면 방향 반전
+        }
+
+        transform.RotateAround(centerPoint.position, Vector3.forward, rotationAmount);
+
+        // 위치 조정 로직 (변경 없음)
         Vector3 difference = transform.position - centerPoint.position;
-        if (difference != Vector3.zero) // 벡터가 0이 아니면 정규화
+        if (difference != Vector3.zero)
         {
             Vector3 orbitPosition = difference.normalized * currentDistance + centerPoint.position;
             transform.position = orbitPosition;
         }
-        else // 벡터가 0이면 기본 방향을 설정
+        else
         {
-            transform.position = centerPoint.position + new Vector3(0, distance, 0); // 중심점 위로 거리만큼 위치
+            transform.position = centerPoint.position + new Vector3(0, distance, 0);
         }
     }
 
@@ -119,8 +134,19 @@ public class PlayerMove : MonoBehaviour
         Debug.Log("Dash started"); // 대쉬 시작 로그
         isDashing = true;
         silhouette.Active = true;
-        float originalSpeed = rotationSpeed; // 원래 속도를 임시 변수에 저장
-        rotationSpeed *= dashSpeedMultiplier; // 회전 속도 증가
+
+        float originalSpeed = rotationSpeed;
+
+
+        // 회전 속도 증가
+        if (lastRotationDirection == -1)
+        {
+            rotationSpeed *= dashSpeedMultiplier * rightRotationMultiplier;
+        }
+        else
+        {
+            rotationSpeed *= dashSpeedMultiplier;
+        }
 
         try
         {
