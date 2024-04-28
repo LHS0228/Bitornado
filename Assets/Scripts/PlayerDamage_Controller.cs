@@ -7,28 +7,32 @@ public class PlayerDamage_Controller : MonoBehaviour
     [SerializeField]
     private PlayerMove playerMove;
 
-    [SerializeField]
-    private float[] hpTrans = { 0, 3.5f, 6.5f, 9 };
-    public int hp = 3;
-
     // Start is called before the first frame update
     void Awake()
     {
         playerMove = GetComponent<PlayerMove>();
     }
 
-    // Update is called once per frame
-    private void FixedUpdate()
-    {
-    }
-
     public void getDamage()
     {
-        if (hp != 0)
+        if (playerMove.nowHP != 0)
         {
-            hp--;
-            playerMove.currentDistance = hpTrans[hp];
-            Debug.Log(hpTrans[hp]);
+            playerMove.nowHP--;
+            StartCoroutine(AdjustDistanceSmoothly(playerMove.currentDistance, playerMove.hpDistance[playerMove.nowHP]));
         }
+    }
+
+    private IEnumerator AdjustDistanceSmoothly(float startDistance, float endDistance)
+    {
+        float duration = 0.5f; // 전환에 걸리는 시간
+        float elapsed = 0;
+
+        while (elapsed < duration)
+        {
+            playerMove.currentDistance = Mathf.Lerp(startDistance, endDistance, elapsed / duration);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        playerMove.currentDistance = endDistance;
     }
 }

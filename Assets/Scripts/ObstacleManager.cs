@@ -22,7 +22,8 @@ public class ObstacleManager : MonoBehaviour
         }
     }
 
-    public GameObject Get(int index, Vector3 scale, Vector3 startTrans, Quaternion quaternion, Color32 color, string effectName, float delayTime, float onTime)
+    //index = 프리펩, scale = 크기, startTrans = 나타나는 위치,  
+    public GameObject Get(int index, Vector3 scale, Vector3 startTrans, Color32 color, string effectType, float onTime, float idleTime, float attackTime)
     {
         GameObject select = null;
 
@@ -31,7 +32,6 @@ public class ObstacleManager : MonoBehaviour
             {
                 select = item;
                 select.transform.position = startTrans;
-                select.transform.rotation = quaternion;
                 select.SetActive(true);
                 break;
             }
@@ -39,18 +39,50 @@ public class ObstacleManager : MonoBehaviour
 
         if(select == null)
         {
-            select = Instantiate(prefabs[index], startTrans, quaternion);
+            select = Instantiate(prefabs[index], startTrans, Quaternion.identity);
             pools[index].Add(select);
         }
 
         Obstacle obstacle = select.GetComponent<Obstacle>();
-        obstacle.obstacleQuaternion = quaternion;
+
         obstacle.obstacleMaterial.color = color;
-        obstacle.onTime = onTime;
+        obstacle.idleTime = idleTime;
         obstacle.scale = scale;
-        obstacle.delayTime = delayTime;
+        obstacle.onTime = onTime;
+        obstacle.effectType = effectType;
 
         return select;
     }
 
+    public GameObject Get(int index, Vector3 scale, Vector3 startTrans, Color32 color, string effectType, float onTime, float attackTime)
+    {
+        GameObject select = null;
+
+        foreach (GameObject item in pools[index])
+        {
+            if (!item.activeSelf)
+            {
+                select = item;
+                select.transform.position = startTrans;
+                select.SetActive(true);
+                break;
+            }
+        }
+
+        if (select == null)
+        {
+            select = Instantiate(prefabs[index], startTrans, Quaternion.identity);
+            pools[index].Add(select);
+        }
+
+        Obstacle obstacle = select.GetComponent<Obstacle>();
+
+        obstacle.obstacleMaterial.color = color;
+        obstacle.idleTime = 0;
+        obstacle.scale = scale;
+        obstacle.onTime = onTime;
+        obstacle.effectType = effectType;
+
+        return select;
+    }
 }

@@ -10,7 +10,6 @@ public class Obstacle : MonoBehaviour
 {
     public Material obstacleMaterial;
     public SpriteRenderer obstacleRenderer;
-    public Quaternion obstacleQuaternion;
 
     public Transform endPoint;   // 끝점 오브젝트
 
@@ -18,8 +17,9 @@ public class Obstacle : MonoBehaviour
     public Vector3 endTrans;
     public Vector3 scale;
 
-    public float delayTime;
     public float onTime;
+    public float idleTime;
+    public float attackTime;
 
     public string effectType;
 
@@ -37,7 +37,7 @@ public class Obstacle : MonoBehaviour
         obstacleMaterial = GetComponent<Material>();
         obstacleRenderer = GetComponent<SpriteRenderer>();
         lineBox = transform.Find("LineBox").gameObject;
-        endPoint = GameObject.FindWithTag("WhirlWind").transform;
+        endPoint = GameManager.instance.whirlWind.transform;
     }
 
     private void OnEnable()
@@ -45,28 +45,31 @@ public class Obstacle : MonoBehaviour
         transform.position = startTrans;
         transform.localScale = scale;
 
-        direction = Vector3.zero - transform.position;
+        direction = endPoint.transform.position - transform.position;
         angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
 
         SetTransparency(0);
 
-        obstacleRenderer.DOFade(1, delayTime).SetEase(Ease.InOutQuad).SetUpdate(UpdateType.Fixed);
+        obstacleRenderer.DOFade(1, onTime).SetEase(Ease.InOutQuad).SetUpdate(UpdateType.Fixed);
 
         switch (effectType)
         {
             case "Rolling":
-                transform.DORotate(new Vector3(0, 0, 360), delayTime, RotateMode.FastBeyond360).SetRelative().SetUpdate(UpdateType.Fixed);
-                lineBox.transform.DOScaleX(1, onTime).SetUpdate(UpdateType.Fixed).SetDelay(delayTime);
+                transform.DORotate(new Vector3(0, 0, 360), onTime, RotateMode.FastBeyond360).SetRelative().SetUpdate(UpdateType.Fixed);
+                lineBox.transform.DOScaleX(1, attackTime).SetUpdate(UpdateType.Fixed).SetDelay(onTime);
                 break;
+
             case "Sizing":
                 transform.position.Scale(new Vector3(0,0,0));
-                transform.DOScale(scale, delayTime).SetUpdate(UpdateType.Fixed);
+                transform.DOScale(scale, onTime).SetUpdate(UpdateType.Fixed);
                 break;
         }
 
-        transform.DOMove(new Vector3(0,0,0), onTime).SetDelay(delayTime).SetEase(Ease.Linear).SetUpdate(UpdateType.Fixed).OnComplete(() => {
-            transform.DOScaleX(0, 0.2f);});
+        DOVirtual.DelayedCall(onTime - 0.1f, () => {isAttack = true;});
+
+        transform.DOMove(new Vector3(0, 0, 0), attackTime).SetDelay(onTime+idleTime).SetEase(Ease.Linear).SetUpdate(UpdateType.Fixed)
+            .OnComplete(() => { transform.DOScaleX(0, 0.2f).OnComplete(() => { gameObject.SetActive(false); }); });
     }
 
     private void OnDisable()
@@ -86,25 +89,23 @@ public class Obstacle : MonoBehaviour
             }
 
             //Target 오브젝트가 월드 중심을 바라보게 합니다.
-            direction = Vector3.zero - transform.position;
+            direction = endPoint.transform.position - transform.position;
             angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+            
+            if (transform.position != endPoint.transform.position)
+            {
+                transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+            }
 
             // Target과 월드 중심의 거리에 따라 Hitbox의 크기를 조절합니다.
-            float distance = Vector3.Distance(transform.position, Vector3.zero);
-            lineBox.transform.localScale = new Vector3(1, distance, 1); // X와 Z는 고정, Y만 거리에 따라 조정
-        }
-        else
-        {
-            if (lineBox.activeSelf)
-            {
-                lineBox.SetActive(false);
-            }
+            float distance = Vector3.Distance(transform.position, endPoint.transform.position);
+            lineBox.transform.localScale = new Vector3(lineBox.transform.localScale.x, distance, 1); // X와 Z는 고정, Y만 거리에 따라 조정
         }
     }
 
     private void SetTransparency(float alpha)
     {
+        isAttack = false;
         Color newColor = obstacleRenderer.color; // 현재 색상을 가져옵니다
         newColor.a = alpha; // 투명도 값을 조정합니다
         obstacleRenderer.color = newColor; // 수정된 색상으로 설정합니다

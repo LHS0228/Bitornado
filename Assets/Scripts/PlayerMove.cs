@@ -5,6 +5,7 @@ using System.Net;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
 public class PlayerMove : MonoBehaviour
 {
@@ -17,10 +18,8 @@ public class PlayerMove : MonoBehaviour
     [Header("중심점, 속도, 거리 설정")]
     private Transform centerPoint; // 중심점
     public float rotationSpeed = 10f; // 회전 속도
-    public float distance = 10f; // 중심점과의 거리
+    //public float distance = 10f; // 중심점과의 거리
     public float rightRotationMultiplier = 1.5f; // 오른쪽 회전 속도 배수
-
-
 
     [Header("반대로 돌기 방향 설정")]
     public bool turnRotation;
@@ -34,6 +33,11 @@ public class PlayerMove : MonoBehaviour
     public float dashSpeedMultiplier = 3f; // 대쉬 속도 배수
     public float dashTime = 0.3f; // 대쉬 지속 시간
 
+    [Header("HP 관련")]
+    private const int maxHP = 3;
+    public int nowHP = 3;
+    public float[] hpDistance = { 0, 3.5f, 6.5f, 9 };
+
     [Header("왠만하면 건들지 말 것")]
     [SerializeField]
     Vector2 inputVec;
@@ -41,13 +45,14 @@ public class PlayerMove : MonoBehaviour
     private bool isJumping = false;
     [SerializeField]
     private bool isDashing = false;
-    public float currentDistance; //점프 설정
     [SerializeField]
     private float lastRotationDirection = -1; // 마지막 회전 방향 저장
+    public float currentDistance; //점프 설정
 
     private void Start()
     {
-        currentDistance = distance;
+        nowHP = maxHP;
+        currentDistance = hpDistance[nowHP];
         silhouette = GetComponent<Silhouette>();
     }
 
@@ -59,7 +64,7 @@ public class PlayerMove : MonoBehaviour
             lastRotationDirection = Mathf.Sign(inputVec.x);
         }
 
-        // 회전 속도 계산
+        // 회전 속도 계산 
         float speedModifier = (lastRotationDirection > 0) ? rightRotationMultiplier : 1;
         float rotationAmount = lastRotationDirection * rotationSpeed * speedModifier * Time.deltaTime;
 
@@ -72,14 +77,11 @@ public class PlayerMove : MonoBehaviour
 
         // 위치 조정 로직 (변경 없음)
         Vector3 difference = transform.position - centerPoint.position;
+
         if (difference != Vector3.zero)
         {
             Vector3 orbitPosition = difference.normalized * currentDistance + centerPoint.position;
             transform.position = orbitPosition;
-        }
-        else
-        {
-            transform.position = centerPoint.position + new Vector3(0, distance, 0);
         }
     }
 
@@ -107,26 +109,25 @@ public class PlayerMove : MonoBehaviour
     private IEnumerator JumpRoutine()
     {
         isJumping = true;
+        float originalDistance = currentDistance; // 원래 거리를 저장
         float elapsed = 0;
 
         while (elapsed < jumpTime)
         {
-            currentDistance = Mathf.Lerp(distance, distance + jumpDistance, elapsed / jumpTime);
+            currentDistance = Mathf.Lerp(originalDistance, hpDistance[nowHP] + jumpDistance, elapsed / jumpTime);
             elapsed += Time.deltaTime;
             yield return null;
         }
 
-        // 점프 후 원래 거리로 복귀
         elapsed = 0;
         while (elapsed < jumpTime)
         {
-            currentDistance = Mathf.Lerp(distance + jumpDistance, distance, elapsed / jumpTime);
+            currentDistance = Mathf.Lerp(hpDistance[nowHP] + jumpDistance, originalDistance, elapsed / jumpTime);
             elapsed += Time.deltaTime;
             yield return null;
         }
         isJumping = false;
-
-        Debug.Log("점프 작동함");
+        currentDistance = hpDistance[nowHP]; // 점프 후 HP에 기반한 거리로 복귀
     }
 
     private IEnumerator DashRoutine()
@@ -152,6 +153,7 @@ public class PlayerMove : MonoBehaviour
         {
             yield return new WaitForSeconds(dashTime); // 대쉬 지속 시간
         }
+
         finally
         {
             rotationSpeed = originalSpeed; // 회전 속도를 원래대로 복구
