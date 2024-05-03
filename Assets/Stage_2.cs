@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Stage_01 : MonoBehaviour
+public class Stage_2 : MonoBehaviour
 {
     float Tiame;
     bool isgo;
