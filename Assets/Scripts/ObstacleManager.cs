@@ -1,70 +1,36 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq.Expressions;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class ObstacleManager : MonoBehaviour
 {
-    //프리펩들을 보관할 변수
-    public GameObject[] prefabs;
-
+    public GameObject[] prefabs;  // 프리펩들을 보관할 변수
     List<GameObject>[] pools;
 
     private void Awake()
     {
         pools = new List<GameObject>[prefabs.Length];
-
-        for(int index = 0; index < pools.Length; index++)
+        for (int index = 0; index < pools.Length; index++)
         {
             pools[index] = new List<GameObject>();
         }
     }
 
-    //index = 프리펩, scale = 크기, startTrans = 나타나는 위치,  
     public GameObject Get(int index, Vector3 scale, Vector3 startTrans, Color32 color, string effectType, float onTime, float idleTime, float attackTime)
     {
-        GameObject select = null;
-
-        foreach(GameObject item in pools[index]) {
-            if(!item.activeSelf)
-            {
-                select = item;
-                select.transform.position = startTrans;
-                select.SetActive(true);
-                break;
-            }
-        }
-
-        if(select == null)
-        {
-            select = Instantiate(prefabs[index], startTrans, Quaternion.identity);
-            pools[index].Add(select);
-        }
-
-        Obstacle obstacle = select.GetComponent<Obstacle>();
-
-        obstacle.obstacleMaterial.color = color;
-        obstacle.idleTime = idleTime;
-        obstacle.scale = scale;
-        obstacle.onTime = onTime;
-        obstacle.effectType = effectType;
-
+        GameObject select = FindOrCreateObstacle(index, startTrans);
+        SetupObstacle(select, scale, color, effectType, onTime, idleTime, attackTime);
         return select;
     }
 
-    public GameObject Get(int index, Vector3 scale, Vector3 startTrans, Color32 color, string effectType, float onTime, float attackTime)
+    private GameObject FindOrCreateObstacle(int index, Vector3 startTrans)
     {
         GameObject select = null;
-
         foreach (GameObject item in pools[index])
         {
             if (!item.activeSelf)
             {
                 select = item;
-                select.transform.position = startTrans;
-                select.SetActive(true);
                 break;
             }
         }
@@ -75,14 +41,23 @@ public class ObstacleManager : MonoBehaviour
             pools[index].Add(select);
         }
 
-        Obstacle obstacle = select.GetComponent<Obstacle>();
-
-        obstacle.obstacleMaterial.color = color;
-        obstacle.idleTime = 0;
-        obstacle.scale = scale;
-        obstacle.onTime = onTime;
-        obstacle.effectType = effectType;
+        select.transform.position = startTrans; // 위치 설정
 
         return select;
+    }
+
+    private void SetupObstacle(GameObject obstacle, Vector3 scale, Color32 color, string effectType, float onTime, float idleTime, float attackTime)
+    {
+        Obstacle obstacleComponent = obstacle.GetComponent<Obstacle>();
+
+        obstacleComponent.obstacleRenderer.color = color;
+        obstacleComponent.scale = scale;
+        obstacleComponent.effectType = effectType;
+        obstacleComponent.onTime = onTime;
+        obstacleComponent.idleTime = idleTime;
+        obstacleComponent.attackTime = attackTime;
+    
+        obstacle.transform.localScale = scale;  // 스케일 설정
+        obstacle.SetActive(true);  // 오브젝트 활성화
     }
 }

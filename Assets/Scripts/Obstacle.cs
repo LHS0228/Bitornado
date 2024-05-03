@@ -8,13 +8,9 @@ using Unity.VisualScripting;
 
 public class Obstacle : MonoBehaviour
 {
-    public Material obstacleMaterial;
     public SpriteRenderer obstacleRenderer;
 
-    public Transform endPoint;   // 끝점 오브젝트
-
     public Vector3 startTrans;
-    public Vector3 endTrans;
     public Vector3 scale;
 
     public float onTime;
@@ -34,42 +30,39 @@ public class Obstacle : MonoBehaviour
 
     private void Awake()
     {
-        obstacleMaterial = GetComponent<Material>();
         obstacleRenderer = GetComponent<SpriteRenderer>();
         lineBox = transform.Find("LineBox").gameObject;
-        endPoint = GameManager.instance.whirlWind.transform;
     }
 
     private void OnEnable()
     {
-        transform.position = startTrans;
-        transform.localScale = scale;
+        DOTween.Kill(gameObject);
 
-        direction = endPoint.transform.position - transform.position;
+        direction = Vector3.zero - transform.position;
         angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
 
         SetTransparency(0);
 
-        obstacleRenderer.DOFade(1, onTime).SetEase(Ease.InOutQuad).SetUpdate(UpdateType.Fixed);
+        obstacleRenderer.DOFade(1, onTime).SetEase(Ease.InOutQuad).SetUpdate(UpdateType.Fixed).SetDelay(onTime);
 
         switch (effectType)
         {
             case "Rolling":
-                transform.DORotate(new Vector3(0, 0, 360), onTime, RotateMode.FastBeyond360).SetRelative().SetUpdate(UpdateType.Fixed);
+                transform.DORotate(new Vector3(0, 0, 360), onTime, RotateMode.FastBeyond360).SetDelay(onTime).SetRelative().SetUpdate(UpdateType.Fixed);
                 lineBox.transform.DOScaleX(1, attackTime).SetUpdate(UpdateType.Fixed).SetDelay(onTime);
                 break;
 
             case "Sizing":
                 transform.position.Scale(new Vector3(0,0,0));
-                transform.DOScale(scale, onTime).SetUpdate(UpdateType.Fixed);
+                transform.DOScale(scale, onTime).SetUpdate(UpdateType.Fixed).SetDelay(onTime);
                 break;
         }
 
-        DOVirtual.DelayedCall(onTime - 0.1f, () => {isAttack = true;});
+        DOVirtual.DelayedCall(onTime - 0.1f, () => { isAttack = true; }).SetUpdate(UpdateType.Fixed);
 
         transform.DOMove(new Vector3(0, 0, 0), attackTime).SetDelay(onTime+idleTime).SetEase(Ease.Linear).SetUpdate(UpdateType.Fixed)
-            .OnComplete(() => { transform.DOScaleX(0, 0.2f).OnComplete(() => { gameObject.SetActive(false); }); });
+            .OnComplete(() => { transform.DOScaleX(0, 0.2f).OnComplete(() => { gameObject.SetActive(false); }); }).SetUpdate(UpdateType.Fixed);
     }
 
     private void OnDisable()
@@ -89,16 +82,16 @@ public class Obstacle : MonoBehaviour
             }
 
             //Target 오브젝트가 월드 중심을 바라보게 합니다.
-            direction = endPoint.transform.position - transform.position;
+            direction = Vector3.zero - transform.position;
             angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
             
-            if (transform.position != endPoint.transform.position)
+            if (transform.position != Vector3.zero)
             {
                 transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
             }
 
             // Target과 월드 중심의 거리에 따라 Hitbox의 크기를 조절합니다.
-            float distance = Vector3.Distance(transform.position, endPoint.transform.position);
+            float distance = Vector3.Distance(transform.position, Vector3.zero);
             lineBox.transform.localScale = new Vector3(lineBox.transform.localScale.x, distance, 1); // X와 Z는 고정, Y만 거리에 따라 조정
         }
     }

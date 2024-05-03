@@ -7,9 +7,11 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
     public ObstacleManager obstacle;
 
+    public AudioSource gameBGM;
     public GameObject whirlWind;
 
     // Start is called before the first frame update
+
     void Awake()
     {
         instance = this;
