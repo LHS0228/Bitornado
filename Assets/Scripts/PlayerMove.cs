@@ -37,6 +37,7 @@ public class PlayerMove : MonoBehaviour
     private const int maxHP = 3;
     public int nowHP = 3;
     public float[] hpDistance = { 0, 3.5f, 6.5f, 9 };
+    public bool isInvencible = false;
 
     [Header("왠만하면 건들지 말 것")]
     [SerializeField]
@@ -49,7 +50,7 @@ public class PlayerMove : MonoBehaviour
     private float lastRotationDirection = -1; // 마지막 회전 방향 저장
     public float currentDistance; //점프 설정
 
-    private void Start()
+    private void Awake()
     {
         nowHP = maxHP;
         currentDistance = hpDistance[nowHP];

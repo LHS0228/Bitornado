@@ -16,10 +16,10 @@ public class ObstacleManager : MonoBehaviour
         }
     }
 
-    public GameObject Get(int index, Vector3 scale, Vector3 startTrans, Color32 color, string effectType, float onTime, float idleTime, float attackTime)
+    public GameObject Get(int index, Vector3 scale, Vector3 startTrans, string effectType, float onTime, float idleTime, float attackTime)
     {
         GameObject select = FindOrCreateObstacle(index, startTrans);
-        SetupObstacle(select, scale, color, effectType, onTime, idleTime, attackTime);
+        SetupObstacle(select, scale, effectType, onTime, idleTime, attackTime);
         return select;
     }
 
@@ -46,11 +46,11 @@ public class ObstacleManager : MonoBehaviour
         return select;
     }
 
-    private void SetupObstacle(GameObject obstacle, Vector3 scale, Color32 color, string effectType, float onTime, float idleTime, float attackTime)
+    private void SetupObstacle(GameObject obstacle, Vector3 scale, string effectType, float onTime, float idleTime, float attackTime)
     {
         Obstacle obstacleComponent = obstacle.GetComponent<Obstacle>();
 
-        obstacleComponent.obstacleRenderer.color = color;
+        obstacleComponent.obstacleRenderer.color = new Color(Random.Range(100, 255) / 255f, Random.Range(100, 255) / 255f, Random.Range(100, 255) / 255f);
         obstacleComponent.scale = scale;
         obstacleComponent.effectType = effectType;
         obstacleComponent.onTime = onTime;

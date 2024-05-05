@@ -7,8 +7,9 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
     public ObstacleManager obstacle;
 
-    public AudioSource gameBGM;
     public GameObject whirlWind;
+
+    public GameObject player;
 
     // Start is called before the first frame update
 

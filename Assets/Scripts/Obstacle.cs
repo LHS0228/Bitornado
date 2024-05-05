@@ -69,7 +69,7 @@ public class Obstacle : MonoBehaviour
     {
         isAttack = false;
         SetTransparency(0);
-        lineBox.transform.localScale = new Vector3(0, lineBox.transform.localScale.y, lineBox.transform.localScale.z);
+        lineBox.transform.localScale = new Vector3(0, lineBox.transform.localScale.y / gameObject.transform.localScale.y, lineBox.transform.localScale.z);
     }
 
     private void FixedUpdate()
@@ -92,7 +92,7 @@ public class Obstacle : MonoBehaviour
 
             // Target과 월드 중심의 거리에 따라 Hitbox의 크기를 조절합니다.
             float distance = Vector3.Distance(transform.position, Vector3.zero);
-            lineBox.transform.localScale = new Vector3(lineBox.transform.localScale.x, distance, 1); // X와 Z는 고정, Y만 거리에 따라 조정
+            lineBox.transform.localScale = new Vector3(lineBox.transform.localScale.x / gameObject.transform.localScale.y, distance / gameObject.transform.localScale.y, 1); // X와 Z는 고정, Y만 거리에 따라 조정
         }
     }
 
@@ -102,13 +102,5 @@ public class Obstacle : MonoBehaviour
         Color newColor = obstacleRenderer.color; // 현재 색상을 가져옵니다
         newColor.a = alpha; // 투명도 값을 조정합니다
         obstacleRenderer.color = newColor; // 수정된 색상으로 설정합니다
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if(collision.collider.tag == "Player")
-        {
-            collision.gameObject.GetComponent<PlayerMove>().nowHP -= 1;
-        }
     }
 }
