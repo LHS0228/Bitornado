@@ -103,4 +103,12 @@ public class Obstacle : MonoBehaviour
         newColor.a = alpha; // 투명도 값을 조정합니다
         obstacleRenderer.color = newColor; // 수정된 색상으로 설정합니다
     }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.collider.tag == "Player")
+        {
+            collision.gameObject.GetComponent<PlayerMove>().nowHP -= 1;
+        }
+    }
 }
