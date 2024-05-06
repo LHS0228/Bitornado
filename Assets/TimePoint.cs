@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -20,5 +21,15 @@ public class TimePoint : MonoBehaviour
         point += Time.deltaTime;
 
         pointText.text = $"{(int)point}";
+    }
+
+    public void PointSetting()
+    {
+        if (PlayerPrefs.GetInt("HighPoint", 0) < (int)point)
+        {
+            PlayerPrefs.SetInt("HighPoint", (int)point);
+        }
+
+        PlayerPrefs.SetInt("TimePoint", (int)point);
     }
 }

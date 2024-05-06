@@ -24,11 +24,11 @@ public class TitleSystem : MonoBehaviour
     .SetEase(Ease.InOutQuad); // 부드러운 시작과 끝을 위한 이징
 
 
-        start.transform.DOMoveY(start.transform.position.y + 2, 1.2f) // 1초 동안 위로 3 유닛 이동
+        start.transform.DOMoveY(start.transform.position.y + 5, 1f) // 1초 동안 위로 3 유닛 이동
     .SetLoops(-1, LoopType.Yoyo) // 무한 루프, Yoyo 방식
     .SetEase(Ease.InOutQuad); // 부드러운 시작과 끝을 위한 이징
 
-        exit.transform.DOMoveY(exit.transform.position.y + 2, 1f) // 1초 동안 위로 3 유닛 이동
+        exit.transform.DOMoveY(exit.transform.position.y + 5, 1f) // 1초 동안 위로 3 유닛 이동
     .SetLoops(-1, LoopType.Yoyo) // 무한 루프, Yoyo 방식
     .SetEase(Ease.InOutQuad); // 부드러운 시작과 끝을 위한 이징
     }
