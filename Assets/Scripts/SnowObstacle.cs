@@ -9,12 +9,17 @@ public class SnowObstacle : MonoBehaviour
     public float idleTime;
     public float attackTime;
 
-    public float attackSpeed = 10.0f;
+    public float attackSpeed = 20.0f;
     Vector3 direction = Vector3.down;
 
     private void Update()
     {
         transform.position += direction * attackSpeed * Time.deltaTime;
+
+        if (transform.position.y < -25)
+        {
+            gameObject.SetActive(false);
+        }
     }
 
 };

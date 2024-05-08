@@ -59,8 +59,8 @@ public class Stage_2 : MonoBehaviour
         for (int i = 0; i < 40; i++)
         {
             float x = Random.Range(-15, 15);
-
-            DOVirtual.DelayedCall(26.0f - 1.54f, () => GameManager.instance.obstacle.Get(1, new Vector3(x, 30, 0), 0.2f, 1.14f, 0.2f)).SetUpdate(UpdateType.Fixed);
+            
+            DOVirtual.DelayedCall(Random.Range(25.0f, 28.0f), () => GameManager.instance.obstacle.Get(1, new Vector3(x, 30, 0), 0.2f, 1.14f, 0.2f)).SetUpdate(UpdateType.Fixed);
         }
 
         DOVirtual.DelayedCall(27.2f - 1.54f, () => GameManager.instance.obstacle.Get(0, new Vector3(2, 2, 2), new Vector3(0, -15, 1), "Rolling", 0.2f, 1.14f, 0.2f)).SetUpdate(UpdateType.Fixed); //27.74
