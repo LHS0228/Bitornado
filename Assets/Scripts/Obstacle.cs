@@ -24,7 +24,7 @@ public class Obstacle : MonoBehaviour
     float angle;
 
     [SerializeField]
-    private bool isAttack = false;
+    private bool isAttack = true;
 
     public GameObject lineBox;
 
@@ -67,7 +67,7 @@ public class Obstacle : MonoBehaviour
 
     private void OnDisable()
     {
-        isAttack = false;
+        isAttack = true;
         SetTransparency(0);
         lineBox.transform.localScale = new Vector3(0, lineBox.transform.localScale.y / gameObject.transform.localScale.y, lineBox.transform.localScale.z);
     }
@@ -98,7 +98,7 @@ public class Obstacle : MonoBehaviour
 
     private void SetTransparency(float alpha)
     {
-        isAttack = false;
+        isAttack = true;
         Color newColor = obstacleRenderer.color; // 현재 색상을 가져옵니다
         newColor.a = alpha; // 투명도 값을 조정합니다
         obstacleRenderer.color = newColor; // 수정된 색상으로 설정합니다

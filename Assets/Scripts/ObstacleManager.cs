@@ -23,6 +23,14 @@ public class ObstacleManager : MonoBehaviour
         return select;
     }
 
+    public GameObject Get(int index, Vector3 startTrans, float onTime, float idleTime, float attackTime)
+    {
+        GameObject select = FindOrCreateObstacle(index, startTrans);
+        SetupSnowObstacle(select, onTime, idleTime, attackTime);
+
+        return select;
+    }
+
     private GameObject FindOrCreateObstacle(int index, Vector3 startTrans)
     {
         GameObject select = null;
@@ -59,5 +67,16 @@ public class ObstacleManager : MonoBehaviour
     
         obstacle.transform.localScale = scale;  // 스케일 설정
         obstacle.SetActive(true);  // 오브젝트 활성화
+    }
+
+    private void SetupSnowObstacle(GameObject snowObstacle, float onTime, float idleTime, float attackTime)
+    {
+        SnowObstacle snowObstacleComponent = snowObstacle.GetComponent<SnowObstacle>();
+
+        snowObstacleComponent.onTime = onTime;
+        snowObstacleComponent.idleTime = idleTime;
+        snowObstacleComponent.attackTime = attackTime;
+
+        snowObstacle.SetActive(true);
     }
 }
