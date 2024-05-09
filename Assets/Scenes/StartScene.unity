@@ -135,6 +135,7 @@ GameObject:
   - component: {fileID: 57462646}
   - component: {fileID: 57462645}
   - component: {fileID: 57462644}
+  - component: {fileID: 57462647}
   m_Layer: 5
   m_Name: START
   m_TagString: Untagged
@@ -256,6 +257,27 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 57462642}
   m_CullTransparentMesh: 1
+--- !u!95 &57462647
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 57462642}
+  m_Enabled: 0
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 84fd925a70ba2294a8c21b4febf23045, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &810060753
 GameObject:
   m_ObjectHideFlags: 0
@@ -643,6 +665,7 @@ GameObject:
   - component: {fileID: 1797070959}
   - component: {fileID: 1797070958}
   - component: {fileID: 1797070957}
+  - component: {fileID: 1797070960}
   m_Layer: 5
   m_Name: EXIT
   m_TagString: Untagged
@@ -764,6 +787,27 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1797070955}
   m_CullTransparentMesh: 1
+--- !u!95 &1797070960
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1797070955}
+  m_Enabled: 0
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 0d2e641b9caa77249bbc54c47160d949, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1962976376
 GameObject:
   m_ObjectHideFlags: 0
@@ -797,6 +841,8 @@ MonoBehaviour:
   logo_2: {fileID: 852818840}
   start: {fileID: 57462642}
   exit: {fileID: 1797070955}
+  start_anim: {fileID: 57462647}
+  exit_anim: {fileID: 1797070960}
 --- !u!4 &1962976378
 Transform:
   m_ObjectHideFlags: 0

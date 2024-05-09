@@ -11,6 +11,8 @@ public class TitleSystem : MonoBehaviour
 
     public GameObject start;
     public GameObject exit;
+    public Animator start_anim;
+    public Animator exit_anim;
 
     // Start is called before the first frame update
     void Start()
@@ -41,16 +43,13 @@ public class TitleSystem : MonoBehaviour
 
     public void OnStart()
     {
-        SceneManager.LoadScene("SampleScene");
-    }
-
-    public void OnOption()
-    {
-       
+        start_anim.enabled = true;
+        DOVirtual.DelayedCall(1, () => SceneManager.LoadScene("SampleScene"));
     }
 
     public void OnEnd()
     {
-        Application.Quit();
+        exit_anim.enabled = true;
+        DOVirtual.DelayedCall(1, () => Application.Quit());
     }
 }

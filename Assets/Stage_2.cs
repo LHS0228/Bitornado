@@ -6,20 +6,14 @@ using UnityEngine;
 public class Stage_2 : MonoBehaviour
 {
     bool isgo;
+    float isTime;
     public AudioSource gameBGM;
     public AudioClip stage01_Music;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
     public void Stage02_Start()
     {
         DOTween.KillAll();
 
-        isgo = true;
         gameBGM.clip = stage01_Music;
         gameBGM.Play();
 
@@ -92,6 +86,13 @@ public class Stage_2 : MonoBehaviour
 
         //프리랩 타이밍이라 따로 만들기
 
+        for (int i = 0; i < 70; i++)
+        {
+            float x = Random.Range(-15, 15);
+
+            DOVirtual.DelayedCall(Random.Range(60.0f, 67.0f), () => GameManager.instance.obstacle.Get(1, new Vector3(x, 30, 0), 0.2f, 1.14f, 0.2f)).SetUpdate(UpdateType.Fixed);
+        }
+
         DOVirtual.DelayedCall(69.8f - 1.54f, () => GameManager.instance.obstacle.Get(0, new Vector3(2, 2, 2), new Vector3(16, -17, 1), "Rolling", 0.2f, 1.12f, 0.2f)).SetUpdate(UpdateType.Fixed); //69.8
         DOVirtual.DelayedCall(70.4f - 1.52f, () => GameManager.instance.obstacle.Get(0, new Vector3(2, 2, 2), new Vector3(19, 13, 1), "Rolling", 0.2f, 1.14f, 0.2f)).SetUpdate(UpdateType.Fixed); //70.4
 
@@ -137,7 +138,13 @@ public class Stage_2 : MonoBehaviour
         DOVirtual.DelayedCall(112.6f - 1.52f, () => GameManager.instance.obstacle.Get(0, new Vector3(2, 2, 2), new Vector3(19, 13, 1), "Rolling", 0.2f, 1.14f, 0.2f)).SetUpdate(UpdateType.Fixed); //112.6
 
         DOVirtual.DelayedCall(115f - 1.54f, () => GameManager.instance.obstacle.Get(0, new Vector3(2, 2, 2), new Vector3(18, 9, 1), "Rolling", 0.2f, 1.12f, 0.2f)).SetUpdate(UpdateType.Fixed); //115
-        //프리렙타임
+
+        for (int i = 0; i < 20; i++)
+        {
+            float x = Random.Range(-15, 15);
+
+            DOVirtual.DelayedCall(Random.Range(118.0f, 124.0f), () => GameManager.instance.obstacle.Get(1, new Vector3(x, 30, 0), 0.2f, 1.14f, 0.2f)).SetUpdate(UpdateType.Fixed);
+        }
 
         DOVirtual.DelayedCall(126.4f - 1.54f, () => GameManager.instance.obstacle.Get(0, new Vector3(2, 2, 2), new Vector3(7, -17, 1), "Rolling", 0.2f, 1.14f, 0.2f)).SetUpdate(UpdateType.Fixed); //126.4
         DOVirtual.DelayedCall(127f - 1.52f, () => GameManager.instance.obstacle.Get(0, new Vector3(2, 2, 2), new Vector3(7, 17, 1), "Rolling", 0.2f, 1.12f, 0.2f)).SetUpdate(UpdateType.Fixed); //127
@@ -168,5 +175,7 @@ public class Stage_2 : MonoBehaviour
         DOVirtual.DelayedCall(152f - 1.54f, () => GameManager.instance.obstacle.Get(0, new Vector3(2, 2, 2), new Vector3(17, 5, 1), "Rolling", 1.2f, 0.12f, 0.2f)).SetUpdate(UpdateType.Fixed); //152
 
         DOVirtual.DelayedCall(154.6f - 1.52f, () => GameManager.instance.obstacle.Get(0, new Vector3(2, 2, 2), new Vector3(7, 17, 1), "Rolling", 0.2f, 1.14f, 0.2f)).SetUpdate(UpdateType.Fixed); //154.6
+
+        DOVirtual.DelayedCall(157f, () => Stage02_Start()).SetUpdate(UpdateType.Fixed);
     }
 }
